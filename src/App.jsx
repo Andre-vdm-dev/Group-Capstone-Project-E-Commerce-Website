@@ -13,9 +13,12 @@ export default function App() {
   // Figma shows the Bag panel on Home, Product and Cart only
   const showBag = pathname === '/' || pathname === '/cart' || pathname.startsWith('/product/');
 
+  // Figma has no Navbar on the Checkout screens
+  const showNav = pathname !== '/checkout';
+
   return (
     <div className="flex min-h-screen">
-      <Navbar />
+     {showNav && <Navbar />}
 
       <main className="min-w-0 flex-1">
         <Routes>
