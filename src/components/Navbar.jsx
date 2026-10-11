@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 
 const links = [
   { to: '/', label: 'Store', icon: '/assets/icons/storefront.svg' },
@@ -10,7 +10,7 @@ export default function Navbar() {
   const [expanded, setExpanded] = useState(false);
 
   return (
-            <div className="w-[104px] shrink-0">
+    <div className="w-[104px] shrink-0">
     <nav
       className={`fixed left-4 top-4 z-50 flex h-[calc(100vh-32px)] flex-col justify-between rounded-lg bg-white p-2 transition-all duration-200 ${
         expanded ? 'w-[140px] shadow-input' : 'w-[72px]'
@@ -18,9 +18,14 @@ export default function Navbar() {
     >
       <div className={`flex flex-col gap-8 p-2 ${expanded ? 'items-start' : 'items-center'}`}>
         {/* Logo */}
-        <div className="flex items-center justify-center rounded bg-white p-2">
-          <img src="/assets/icons/logo.svg" alt="Logo" className="h-[20.7px] w-4" />
-        </div>
+          <Link
+            to="/"
+            onClick={() => setExpanded(false)}
+            aria-label="Go to home"
+            className="flex items-center justify-center rounded bg-white p-2"
+          >
+            <img src="/assets/icons/logo.svg" alt="Logo" className="h-[20.7px] w-4" />
+          </Link>
 
         {/* Menu toggle */}
         <button
