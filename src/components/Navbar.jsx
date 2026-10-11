@@ -10,9 +10,10 @@ export default function Navbar() {
   const [expanded, setExpanded] = useState(false);
 
   return (
+            <div className="w-[104px] shrink-0">
     <nav
-      className={`sticky top-4 m-4 flex h-[calc(100vh-32px)] shrink-0 flex-col justify-between rounded-lg bg-white p-2 ${
-        expanded ? 'w-[140px]' : 'w-[72px]'
+      className={`fixed left-4 top-4 z-50 flex h-[calc(100vh-32px)] flex-col justify-between rounded-lg bg-white p-2 transition-all duration-200 ${
+        expanded ? 'w-[140px] shadow-input' : 'w-[72px]'
       }`}
     >
       <div className={`flex flex-col gap-8 p-2 ${expanded ? 'items-start' : 'items-center'}`}>
@@ -59,6 +60,7 @@ export default function Navbar() {
           {expanded && <span className="text-h5">Logout</span>}
         </button>
       </div>
-    </nav>
+        </nav>
+    </div>
   );
 }
