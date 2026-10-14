@@ -58,7 +58,7 @@ function OutlineButton({ children, onClick }) {
     <button
       type="button"
       onClick={onClick}
-      className="rounded-[11px] border border-dark px-6 py-2 text-h6 tracking-condensed text-dark"
+      className="btn-outline"
     >
       {children}
     </button>

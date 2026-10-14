@@ -106,7 +106,7 @@ export default function Product() {
           <div className="flex justify-end p-2">
             <button
               onClick={handleAdd}
-              className="flex items-center gap-2 rounded-btn bg-dark px-6 py-2 text-h5 font-medium text-white"
+              className="btn-primary"
             >
               <img src="/assets/icons/bag-add-white.svg" alt="" className="size-6" />
               {added ? 'Added!' : 'Add to Bag'}

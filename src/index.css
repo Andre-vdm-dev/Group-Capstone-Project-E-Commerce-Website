@@ -5,3 +5,16 @@
 @layer base {
   body { @apply bg-page text-dark font-sans; }
 }
+
+/* Reusable component classes (from the Figma design) */
+@layer components {
+  .btn-primary {
+    @apply flex items-center justify-center gap-2 rounded-btn bg-dark px-6 py-2 text-h5 font-medium text-white;
+  }
+  .btn-outline {
+    @apply rounded-[11px] border border-dark px-6 py-2 text-h6 tracking-condensed text-dark;
+  }
+  .card {
+    @apply rounded-input bg-white p-4;
+  }
+}
