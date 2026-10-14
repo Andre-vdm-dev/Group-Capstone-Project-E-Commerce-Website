@@ -200,3 +200,39 @@ export function PaymentForm({ initial, onSave, onBack }) {
     </form>
   );
 }
+/* ---------- Select a saved card ---------- */
+
+// Works out the card brand from the first digit
+export function cardBrand(number) {
+  const first = number.replace(/\D/g, '')[0];
+  if (first === '4') return 'VISA';
+  if (first === '5') return 'MasterCard';
+  return 'Card';
+}
+
+export function SelectCard({ cards, selectedId, onSelect }) {
+  return (
+    <section className="mx-auto flex w-full max-w-[676px] flex-col rounded-[15px] bg-white p-2">
+      <h2 className="p-4 text-h3 uppercase tracking-expanded text-dark">Select a Card</h2>
+      {cards.map((card) => {
+        const selected = card.id === selectedId;
+        return (
+          <button
+            key={card.id}
+            type="button"
+            onClick={() => onSelect(card)}
+            className={`flex items-center gap-2 rounded-input p-2 text-left text-h5 ${
+              selected ? 'bg-page text-dark' : 'text-placeholder hover:bg-page/60'
+            }`}
+          >
+            <span className="p-2">
+              <img src="/assets/icons/card-grey.svg" alt="" className="size-6" />
+            </span>
+            {card.brand} ending in {card.last4}
+            {selected && <span className="ml-auto pr-2 text-h6 text-accent">Selected</span>}
+          </button>
+        );
+      })}
+    </section>
+  );
+}

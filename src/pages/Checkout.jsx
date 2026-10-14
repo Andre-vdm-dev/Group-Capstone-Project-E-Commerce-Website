@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -7,7 +7,7 @@ import {
   increaseQty,
   decreaseQty,
 } from '../store/cartSlice';
-import { AddressForm, PaymentForm } from '../components/CheckoutForms';
+import { AddressForm, PaymentForm, SelectCard, cardBrand } from '../components/CheckoutForms';
 
 const SHIPPING = 6.99;
 const GST_RATE = 0.13; // matches the Figma numbers (760.41 / 5849.37)
@@ -15,6 +15,30 @@ const GIFT_CARD = 0;
 
 const money = (n) => `$ ${n.toFixed(2)}`;
 
+// Saved details shown in the Figma design
+const DEMO_ADDRESS = {
+  name: 'John Maker',
+  street: '123 Plae Grond Stret',
+  city: 'Vermont',
+  state: 'California',
+  country: 'United States of America',
+};
+
+const DEMO_CARDS = [
+  { id: 'c0', brand: 'Mastercard', last4: '1252' },
+  { id: 'c1', brand: 'MasterCard', last4: '4242' },
+  { id: 'c2', brand: 'VISA Debit', last4: '2894' },
+];
+
+// Read something saved in localStorage, or use the fallback
+const load = (key, fallback) => {
+  try {
+    const saved = localStorage.getItem(key);
+    return saved ? JSON.parse(saved) : fallback;
+  } catch {
+    return fallback;
+  }
+};
 /* ---------- small pieces ---------- */
 
 function Card({ title, action, children }) {
@@ -137,9 +161,17 @@ export default function Checkout() {
   const itemsTotal = useSelector(selectCartTotalPrice);
 
   const [view, setView] = useState('review'); // 'review' | 'address' | 'payment'
-  const [address, setAddress] = useState(null);
-  const [payment, setPayment] = useState(null);
+  const [address, setAddress] = useState(() => load('address', DEMO_ADDRESS));
+  const [savedCards, setSavedCards] = useState(() => load('savedCards', DEMO_CARDS));
+  const [payment, setPayment] = useState(() => load('payment', DEMO_CARDS[0]));
   const [billingSame, setBillingSame] = useState(true);
+
+  // Remember the details after a refresh
+  useEffect(() => {
+    localStorage.setItem('address', JSON.stringify(address));
+    localStorage.setItem('payment', JSON.stringify(payment));
+    localStorage.setItem('savedCards', JSON.stringify(savedCards));
+  }, [address, payment, savedCards]);
 
   if (items.length === 0) {
     return (
@@ -169,11 +201,24 @@ export default function Checkout() {
 
   if (view === 'payment') {
     return (
-      <div className="px-6 py-16">
+      <div className="flex flex-col gap-6 px-6 py-16">
+        <SelectCard
+          cards={savedCards}
+          selectedId={payment?.id}
+          onSelect={(card) => {
+            setPayment(card);
+            setView('review');
+          }}
+        />
         <PaymentForm
-          initial={payment}
           onSave={(values) => {
-            setPayment(values);
+            const newCard = {
+              id: `c${Date.now()}`,
+              brand: cardBrand(values.number),
+              last4: values.number.slice(-4),
+            };
+            setSavedCards([...savedCards, newCard]);
+            setPayment(newCard);
             setView('review');
           }}
           onBack={() => setView('review')}
@@ -216,7 +261,7 @@ export default function Checkout() {
             <div className="flex items-center gap-2 text-h5 text-dark">
               <img src="/assets/icons/card.svg" alt="" className="size-6" />
               <span>
-                Card <span className="text-tertiary">ending in {payment.number.slice(-4)}</span>
+                {payment.brand} <span className="text-tertiary">ending in {payment.last4}</span>
               </span>
             </div>
           ) : (

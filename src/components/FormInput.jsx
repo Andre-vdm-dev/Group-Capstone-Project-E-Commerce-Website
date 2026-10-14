@@ -16,7 +16,7 @@ export default function FormInput({ label, name, value, onChange, placeholder, i
           value={value}
           onChange={onChange}
           placeholder={placeholder}
-          className="w-full min-w-0 bg-transparent p-2 text-h5 font-medium text-dark placeholder:text-placeholder focus:outline-none"
+            className={`w-full min-w-0 bg-transparent p-2 ${icon ? 'pl-0' : ''} text-h5 font-medium text-dark placeholder:text-placeholder focus:outline-none`}
           {...rest}
         />
       </div>
