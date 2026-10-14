@@ -1,48 +1,71 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
+
+const links = [
+  { to: '/', label: 'Store', icon: '/assets/icons/storefront.svg' },
+  { to: '/cart', label: 'Bag', icon: '/assets/icons/bag.svg' },
+];
 
 export default function Navbar() {
-  const [isOpen, setIsOpen] = useState(false);
+  const [expanded, setExpanded] = useState(false);
 
   return (
-    <nav className="relative">
-      <div className="flex items-center gap-3">
+    <div className="w-[104px] shrink-0">
+    <nav
+      className={`fixed left-4 top-4 z-50 flex h-[calc(100vh-32px)] flex-col justify-between rounded-lg bg-white p-2 transition-all duration-200 ${
+        expanded ? 'w-[140px] shadow-input' : 'w-[72px]'
+      }`}
+    >
+      <div className={`flex flex-col gap-8 p-2 ${expanded ? 'items-start' : 'items-center'}`}>
+        {/* Logo */}
+          <Link
+            to="/"
+            onClick={() => setExpanded(false)}
+            aria-label="Go to home"
+            className="flex items-center justify-center rounded bg-white p-2"
+          >
+            <img src="/assets/icons/logo.svg" alt="Logo" className="h-[20.7px] w-4" />
+          </Link>
+
+        {/* Menu toggle */}
         <button
-          type="button"
-          onClick={() => setIsOpen(!isOpen)}
-          aria-expanded={isOpen}
-          aria-label={isOpen ? 'Close menu' : 'Open menu'}
-          className="rounded border px-3 py-2"
+          onClick={() => setExpanded(!expanded)}
+          aria-label={expanded ? 'Close menu' : 'Open menu'}
+          className="p-2"
         >
-          {isOpen ? '✕' : '☰'}
+          <img src={expanded ? '/assets/icons/close.svg' : '/assets/icons/menu.svg'} alt="" className="size-6" />
         </button>
 
-        <Link to="/" className="text-xl font-bold">
-          Your Store
-        </Link>
+        {/* Links */}
+        {links.map((link) => (
+          <NavLink
+            key={link.to}
+            to={link.to}
+            end
+            className={({ isActive }) =>
+              `flex items-center gap-2 rounded-nav p-2 ${expanded ? 'w-full' : ''} ${
+                isActive ? 'bg-dark text-white' : 'text-dark'
+              }`
+            }
+          >
+            {({ isActive }) => (
+              <>
+                <img src={link.icon} alt="" className={`size-6 brightness-0 ${isActive ? 'invert' : ''}`} />
+                {expanded && <span className="text-h5">{link.label}</span>}
+              </>
+            )}
+          </NavLink>
+        ))}
       </div>
 
-      {isOpen && (
-        <div className="absolute left-0 top-full z-50 mt-2 w-56 rounded-lg border bg-white p-4 shadow-lg">
-          <ul className="space-y-4">
-            <li>
-              <Link to="/" onClick={() => setIsOpen(false)}>
-                Home
-              </Link>
-            </li>
-            <li>
-              <Link to="/cart" onClick={() => setIsOpen(false)}>
-                Shopping Bag
-              </Link>
-            </li>
-            <li>
-              <Link to="/checkout" onClick={() => setIsOpen(false)}>
-                Checkout
-              </Link>
-            </li>
-          </ul>
-        </div>
-      )}
-    </nav>
+      {/* Logout */}
+      <div className="p-2">
+        <button className={`flex items-center gap-2 rounded-nav bg-danger p-2 text-white ${expanded ? 'w-full' : ''}`}>
+          <img src="/assets/icons/logout.svg" alt="" className="size-6" />
+          {expanded && <span className="text-h5">Logout</span>}
+        </button>
+      </div>
+        </nav>
+    </div>
   );
 }
