@@ -1,5 +1,5 @@
 import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import {
   selectCartItems,
   selectCartTotalQty,
@@ -10,57 +10,54 @@ export default function BagPanel() {
   const items = useSelector(selectCartItems);
   const totalQty = useSelector(selectCartTotalQty);
   const totalPrice = useSelector(selectCartTotalPrice);
+  const { pathname } = useLocation();
+
+  // In Figma, the Bag page shows the total + a Checkout button instead of "View Bag"
+  const onCartPage = pathname === '/cart';
 
   return (
-    <aside className="w-full max-w-sm rounded-lg border bg-white p-5">
-      <h2 className="mb-4 text-xl font-bold">
-        Your Bag ({totalQty})
-      </h2>
+    <aside className="flex flex-col items-center gap-[10px] px-2 pb-2 pt-[72px]">
+      <h2 className="p-2 text-h2 font-medium text-dark">Bag</h2>
 
       {items.length === 0 ? (
-        <p className="text-gray-500">
-          Your bag is empty.
-        </p>
+        <p className="p-2 text-h6 tracking-condensed text-tertiary">Your bag is empty.</p>
       ) : (
         <>
-          <div className="space-y-4">
+          {/* Thumbnails, 3 per row */}
+          <div className="grid grid-cols-3 gap-4 p-2">
             {items.map((item) => (
-              <div key={item.id} className="flex gap-3">
-                {item.image && (
-                  <img
-                    src={item.image}
-                    alt={item.title || item.name || 'Product'}
-                    className="h-20 w-20 rounded object-cover"
-                  />
+              <Link
+                key={item.id}
+                to={`/product/${item.id}`}
+                state={{ product: item }}
+                title={`${item.name} – ${item.variant}`}
+                className="relative flex items-center rounded-thumb bg-white p-2"
+              >
+                <img src={item.image} alt={item.name} className="size-16 object-contain" />
+                {item.qty > 1 && (
+                  <span className="absolute -right-2 -top-2 flex size-6 items-center justify-center rounded-full bg-dark text-h7 text-white">
+                    {item.qty}
+                  </span>
                 )}
-
-                <div className="flex-1">
-                  <p className="font-medium">
-                    {item.title || item.name}
-                  </p>
-
-                  <p className="text-sm text-gray-500">
-                    Quantity: {item.qty}
-                  </p>
-
-                  <p className="font-semibold">
-                    R{(item.price * item.qty).toFixed(2)}
-                  </p>
-                </div>
-              </div>
+              </Link>
             ))}
           </div>
 
-          <div className="mt-5 border-t pt-4">
-            <p className="mb-4 font-bold">
-              Total: R{totalPrice.toFixed(2)}
-            </p>
+          <div className="flex w-full flex-col items-center gap-8 p-4">
+            {onCartPage && (
+              <p className="flex gap-4 text-h5 text-dark">
+                <span className="font-medium">Bag Total:</span>
+                <span>$ {totalPrice.toFixed(2)}</span>
+              </p>
+            )}
 
             <Link
-              to="/cart"
-              className="block rounded bg-black px-4 py-3 text-center text-white hover:bg-gray-800"
+              to={onCartPage ? '/checkout' : '/cart'}
+              aria-label={onCartPage ? 'Go to checkout' : `View bag (${totalQty} items)`}
+              className="flex items-center justify-center gap-2 rounded-btn bg-dark px-6 py-2 text-h5 font-medium text-white"
             >
-              View Bag ({totalQty})
+              <img src="/assets/icons/bag-white.svg" alt="" className="size-6" />
+              {onCartPage ? 'Checkout' : 'View Bag'}
             </Link>
           </div>
         </>
